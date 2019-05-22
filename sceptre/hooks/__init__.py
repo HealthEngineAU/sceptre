@@ -67,8 +67,12 @@ def add_stack_hooks(func):
     @wraps(func)
     def decorated(self, *args, **kwargs):
         execute_hooks(self.hooks.get("before_" + func.__name__))
+        if func.__name__ in ['create', 'update', 'execute_change_set']:
+            execute_hooks(self.hooks.get("before_any_stack_update_or_create"))
         response = func(self, *args, **kwargs)
         execute_hooks(self.hooks.get("after_" + func.__name__))
+        if func.__name__ in ['create', 'update', 'execute_change_set']:
+            execute_hooks(self.hooks.get("after_any_stack_update_or_create"))
 
         return response
 

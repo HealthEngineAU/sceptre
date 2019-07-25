@@ -524,9 +524,14 @@ def update_with_change_set(ctx, environment, stack, diff, verbose):
     if diff:
         new_template = env.stacks[stack].template.body
         old_template = env.stacks[stack].get_template()['TemplateBody']
+
+        yaml.add_multi_constructor('!', lambda loader, suffix, node: None)
+        new_template_pretty = yaml.dump(yaml.load(new_template), default_flow_style = False)
+        old_template_pretty = yaml.dump(yaml.load(old_template), default_flow_style = False)
+
         template_diff = get_diff(
-            old_template,
-            new_template,
+            old_template_pretty,
+            new_template_pretty,
             prefix='template_')
         print_diff(template_diff)
 
